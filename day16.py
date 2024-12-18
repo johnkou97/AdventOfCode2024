@@ -1,7 +1,7 @@
 import heapq
 import numpy as np
 
-def NumberOfTiles(grid: np.array) -> tuple:
+def NumberOfTiles(grid: np.array, cost_forward: float = 1, cost_turn: float = 1000) -> tuple:
     '''
     Calculate the score and number of unique tiles in the winning paths
     '''
@@ -49,15 +49,15 @@ def NumberOfTiles(grid: np.array) -> tuple:
             nx, ny = x - 1, y
 
         if 0 <= nx < grid.shape[0] and 0 <= ny < grid.shape[1] and grid[nx][ny] != '#':
-            heapq.heappush(pq, (new_score + 1, dir, nx, ny, path | {(nx, ny)}))
+            heapq.heappush(pq, (new_score + cost_forward, dir, nx, ny, path | {(nx, ny)}))
 
         # Turn left or right
         for turn in [-1, 1]:
             new_dir = (dir + turn) % 4
-            heapq.heappush(pq, (new_score + 1000, new_dir, x, y, path))
+            heapq.heappush(pq, (new_score + cost_turn, new_dir, x, y, path))
 
     # The lowest score and the number of unique tiles in all winning paths
-    return score, len(set(tiles))
+    return int(score), len(set(tiles))
 
 
 if __name__ == "__main__":
